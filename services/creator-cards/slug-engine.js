@@ -1,7 +1,14 @@
 const { randomInt } = require('crypto');
-const { ERROR_MESSAGE_MAPPING, ERROR_CODE, throwAppError } = require('@app-core/errors');
+const { ERROR_CODE, throwAppError } = require('@app-core/errors');
 const CreatorCards = require('@app/repository/creator-cards');
-const handleDbError = require('../errors/handle-db-error');
+const handleDbError = require('@app/services/errors/handle-db-error');
+const { CreatorCardsMessages } = require('@app/messages');
+
+const SLUG_ALLOWED_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789-_';
+
+function isWhitespace(char) {
+  return char === ' ' || char === '\t' || char === '\n' || char === '\r';
+}
 
 /**
  * Normalizes a slug to lowercase, replaces whitespace with hyphens, and removes any characters that are not letters, numbers, hyphens, or underscores.
@@ -12,11 +19,21 @@ function normalizeSlug(slug) {
   if (slug == null || slug === '') {
     return null;
   }
-  return slug
-    .toLowerCase()
-    .replace(/ /g, '-')
-    .replace(/[^a-z0-9-_]/g, '')
-    .slice(0, 50);
+
+  const lowered = slug.toLowerCase();
+  let normalized = '';
+
+  for (let i = 0; i < lowered.length; i++) {
+    const char = lowered.charAt(i);
+
+    if (isWhitespace(char)) {
+      normalized += '-';
+    } else if (SLUG_ALLOWED_CHARS.includes(char)) {
+      normalized += char;
+    }
+  }
+
+  return normalized.slice(0, 50);
 }
 
 /**
@@ -59,7 +76,7 @@ async function checkSlugDuplicates(slug, mode = 'client-provided') {
      */
     if (mode === 'client-provided' && duplicateSlug) {
       const code = ERROR_CODE.SLUG_ALREADY_TAKEN;
-      const message = ERROR_MESSAGE_MAPPING[code];
+      const message = CreatorCardsMessages[code];
       throwAppError(message, code);
     }
 
@@ -137,7 +154,7 @@ async function executeSlugEngine(slug, title) {
   */
   if (normalizedSlug && normalizedSlug.length > 1 && normalizedSlug.length < 5) {
     const code = ERROR_CODE.INVALID_SLUG_CHARACTERS;
-    const message = ERROR_MESSAGE_MAPPING[code];
+    const message = CreatorCardsMessages[code];
     throwAppError(message, code);
   }
 

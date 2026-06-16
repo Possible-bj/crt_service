@@ -32,10 +32,10 @@ const parsedCreateSpec = validator.parse(createSpec);
 async function create(serviceData) {
   const validatedData = validator.validate(serviceData, parsedCreateSpec);
 
-  validatedData.slug = await executeSlugEngine(validatedData.slug, validatedData.title);
   validatedData.access_type = validatedData.access_type ?? 'public';
-
   validateAccessCode(validatedData.access_type, validatedData.access_code);
+
+  validatedData.slug = await executeSlugEngine(validatedData.slug, validatedData.title);
 
   let createdCard = null;
   try {

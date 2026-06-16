@@ -61,17 +61,4 @@ const ERROR_STATUS_CODE_MAPPING = {
   SL03: 400, // Invalid slug characters
 };
 
-const ERROR_MESSAGE_MAPPING = {
-  SL02: 'Slug is already taken',
-  AC01: 'Access code is required when access type is private',
-  AC05: 'Access code can only be set on private cards',
-  NF01: 'Creator card not found',
-  NF02: 'Creator card is a draft',
-  AC03: 'Access code is required to view private card',
-  AC04: 'Invalid access code for private card',
-
-  // Error Code Extension
-  SL03: 'Slug Should only contain letters, numbers, hyphens, and underscores',
-};
-
-module.exports = { ERROR_CODE, ERROR_STATUS_CODE_MAPPING, ERROR_MESSAGE_MAPPING };
+module.exports = { ERROR_CODE, ERROR_STATUS_CODE_MAPPING };
