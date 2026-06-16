@@ -19,6 +19,18 @@ const ERROR_CODE = {
   VALIDATIONERR: 'VALIDATION_ERROR',
   INVLDDATA: 'INVALID_REQUEST_DATA',
   RTLIMERR: 'RATE_LIMIT_ERROR',
+
+  // Business rule errors
+  SLUG_ALREADY_TAKEN: 'SL02', // Slug is already taken
+  ACCESS_CODE_REQUIRED: 'AC01', // Access code is required when access type is private
+  ACCESS_CODE_CAN_ONLY_BE_SET_ON_PRIVATE_CARDS: 'AC05', // Access code can only be set on private cards
+  CARD_NOT_FOUND: 'NF01', // Card not found
+  CARD_IS_A_DRAFT: 'NF02', // Card is a draft
+  ACCESS_CODE_REQUIRED_TO_VIEW_PRIVATE_CARD: 'AC03', // Access code is required to view private card
+  INVALID_ACCESS_CODE: 'AC04', // Invalid access code
+
+  // Error Code Extension
+  INVALID_SLUG_CHARACTERS: 'SL03', // Invalid slug characters
 };
 
 const ERROR_STATUS_CODE_MAPPING = {
@@ -35,6 +47,31 @@ const ERROR_STATUS_CODE_MAPPING = {
   DUPLICATE_RECORD: 409,
   APPLICATION_ERROR: 500,
   RATE_LIMIT_ERROR: 429,
+
+  // Business rule errors
+  SL02: 400, // Slug is already taken
+  AC01: 400, // Access code is required when access type is private
+  AC05: 400, // Access code can only be set on private cards
+  NF01: 404, // Card not found
+  NF02: 404, // Card is a draft
+  AC03: 403, // Access code is required to view private card
+  AC04: 403, // Invalid access code
+
+  // Error Code Extension
+  SL03: 400, // Invalid slug characters
 };
 
-module.exports = { ERROR_CODE, ERROR_STATUS_CODE_MAPPING };
+const ERROR_MESSAGE_MAPPING = {
+  SL02: 'Slug is already taken',
+  AC01: 'Access code is required when access type is private',
+  AC05: 'Access code can only be set on private cards',
+  NF01: 'Creator card not found',
+  NF02: 'Creator card is a draft',
+  AC03: 'Access code is required to view private card',
+  AC04: 'Invalid access code for private card',
+
+  // Error Code Extension
+  SL03: 'Slug Should only contain letters, numbers, hyphens, and underscores',
+};
+
+module.exports = { ERROR_CODE, ERROR_STATUS_CODE_MAPPING, ERROR_MESSAGE_MAPPING };

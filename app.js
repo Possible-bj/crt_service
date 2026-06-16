@@ -6,11 +6,30 @@ const fs = require('fs');
 const { createServer } = require('@app-core/server');
 const { createConnection } = require('@app-core/mongoose');
 const { createQueue } = require('@app-core/queue');
+const customErrorResponse = require('@app/services/errors/custom-error');
 
 const canLogEndpointInformation = process.env.CAN_LOG_ENDPOINT_INFORMATION;
 
+const { appLogger } = require('@app-core/logger');
+
 createConnection({
   uri: process.env.MONGODB_URI,
+}).catch((error) => {
+  appLogger.error(
+    { errorMessage: error.message, errorStack: error.stack },
+    'mongodb-connection-error'
+  );
+});
+
+// Codebase Extension - Unhandled Rejection Handler
+process.on('unhandledRejection', (reason) => {
+  appLogger.error(
+    {
+      errorMessage: reason?.message || String(reason),
+      errorStack: reason?.stack,
+    },
+    'unhandled-rejection'
+  );
 });
 
 createQueue();
@@ -19,11 +38,15 @@ const server = createServer({
   port: process.env.PORT,
   JSONLimit: '150mb',
   enableCors: true,
+  errorResponseCallback: (error, responseBody) => customErrorResponse(error, responseBody), // Codebase Extension - Custom Error Response Callback
 });
 
 const ENDPOINT_CONFIGS = [
   {
     path: './endpoints/onboarding/',
+  },
+  {
+    path: './endpoints/creator-cards/',
   },
 ];
 

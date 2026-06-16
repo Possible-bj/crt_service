@@ -10,6 +10,7 @@ const expressEnums = require('./enums');
  * @property {string} [JSONLimit] - The max size allowed to be passed in the request body as JSON.
  * @property {boolean} [enableCors] - Optional parameter used to configure whether or not the server should allow CORS requests.
  * @property {boolean} [generateRequestIds] - Optional parameter indicating whether or not unique request IDs should be generated for every request that hits the server.
+ * @property {function} [errorResponseCallback] - Optional callback function to handle error responses.
  */
 
 /**
@@ -248,6 +249,13 @@ function Server(serverConfig = {}) {
           : 'Some error occured.';
         responseComponents.body.errors = error.details || undefined;
         responseComponents.body.data = error.context;
+
+        if (typeof serverConfig.errorResponseCallback === 'function') {
+          responseComponents.body = serverConfig.errorResponseCallback(
+            error,
+            responseComponents.body
+          );
+        }
 
         expressResponse.status(responseComponents.statusCode).json(responseComponents.body); // Todo: Add a callback config that can be used to handle this in a custom way.
       } finally {
