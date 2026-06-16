@@ -1,5 +1,6 @@
 const { appLogger } = require('@app-core/logger');
 const { throwAppError, ERROR_CODE } = require('@app-core/errors');
+const { CreatorCardsMessages } = require('@app/messages');
 
 /**
  * Rethrows application errors; converts unexpected DB errors into a safe 500 response.
@@ -15,7 +16,7 @@ function handleDbError(error) {
     'creator-cards-database-error'
   );
 
-  throwAppError('Some error occurred.', ERROR_CODE.APPERR);
+  throwAppError(CreatorCardsMessages.SOME_ERROR_OCCURRED, ERROR_CODE.APPERR);
 }
 
 module.exports = handleDbError;

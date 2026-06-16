@@ -1,4 +1,5 @@
 const { throwAppError, ERROR_CODE } = require('@app-core/errors');
+const { CreatorCardsMessages } = require('@app/messages');
 
 /**
  * @typedef {'create' | 'delete' | 'retrieve'} CreatorCardResponseContext
@@ -80,7 +81,7 @@ function serializeCreatorCard(card, options = {}) {
 
     return serialized;
   } catch (error) {
-    throwAppError('Failed to serialize creator card', ERROR_CODE.APPERR);
+    throwAppError(CreatorCardsMessages.FAILED_TO_SERIALIZE_CREATOR_CARD, ERROR_CODE.APPERR);
   }
 }
 
