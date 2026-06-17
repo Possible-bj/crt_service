@@ -93,4 +93,40 @@ describe('GET /creator-cards/:slug?access_code=?', () => {
     // expect code to be 'NF02'
     expect(responseData.code).to.equal(ERROR_CODE.CARD_IS_A_DRAFT);
   });
+
+  it('Test Case 13 - Retrieving a private card without a pin', async () => {
+    activeStubConfig = creatorCardsStub.configureStubs({
+      method: 'findOne',
+      mockNull: false,
+      docConfig: payloads.privateCardWithCorrectPin,
+    });
+
+    const response = await server.get('/creator-cards/vip-rate-card');
+
+    // expect status code to be 403
+    expect(response.statusCode).to.be.equal(403);
+
+    const responseData = response.data;
+
+    // expect code to be 'AC03'
+    expect(responseData.code).to.equal(ERROR_CODE.ACCESS_CODE_REQUIRED_TO_VIEW_PRIVATE_CARD);
+  });
+
+  it('Test Case 14 - Retrieving a private card with a wrong pin', async () => {
+    activeStubConfig = creatorCardsStub.configureStubs({
+      method: 'findOne',
+      mockNull: false,
+      docConfig: payloads.privateCardWithCorrectPin,
+    });
+
+    const response = await server.get('/creator-cards/vip-rate-card?access_code=WRONG1');
+
+    // expect status code to be 403
+    expect(response.statusCode).to.be.equal(403);
+
+    const responseData = response.data;
+
+    // expect code to be 'AC04'
+    expect(responseData.code).to.equal(ERROR_CODE.INVALID_ACCESS_CODE);
+  });
 });
