@@ -6,6 +6,7 @@ require('./types');
 const fs = require('fs');
 const path = require('path');
 const { createServer } = require('@app-core/server');
+const customErrorResponse = require('@app/services/errors/custom-error');
 const simulateRequest = require('./simulate-request');
 const getProjectRoot = require('./get-project-root');
 
@@ -53,7 +54,9 @@ function addHandlers(server, filePaths = [], options = {}) {
  * @returns {MockedServerInstance}
  */
 function createMockServer(endpointFilePaths = [], options = {}) {
-  const server = createServer();
+  const server = createServer({
+    errorResponseCallback: (error, responseBody) => customErrorResponse(error, responseBody),
+  });
 
   if (endpointFilePaths.length) {
     addHandlers(server, endpointFilePaths, options);

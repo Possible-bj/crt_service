@@ -1,6 +1,7 @@
 const validator = require('@app-core/validator');
 const CreatorCards = require('@app/repository/creator-cards');
 const handleDbError = require('@app/services/errors/handle-db-error');
+const { CreatorCardsMessages } = require('@app/messages');
 const executeSlugEngine = require('./slug-engine');
 const serializeCreatorCard = require('./serialize-card');
 const validateAccessCode = require('./access-code');
@@ -47,7 +48,7 @@ async function create(serviceData) {
   const serializedCard = serializeCreatorCard(createdCard, { context: 'create' });
   return {
     data: serializedCard,
-    message: 'Creator Card Created Successfully.',
+    message: CreatorCardsMessages.CREATOR_CARD_CREATED_SUCCESSFULLY,
   };
 }
 
