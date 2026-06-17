@@ -68,7 +68,7 @@ describe('POST /creator-cards', () => {
     const createdCard = response.data.data;
 
     // expect access_code to be present
-    expect(createdCard.access_code).to.have.property('access_code');
+    expect(createdCard).to.have.property('access_code');
 
     // expect access_code to be equal to payloads.privateCard.access_code
     expect(createdCard.access_code).to.equal(payloads.privateCard.access_code);

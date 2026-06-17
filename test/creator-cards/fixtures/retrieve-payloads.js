@@ -39,7 +39,17 @@ const privateCardWithCorrectPin = {
   },
 };
 
+/** Test Case 12 — Retrieving a draft card */
+const draftCard = {
+  title: 'My Draft Card',
+  description: 'My draft card - can not be retrieved by public endpoint',
+  slug: 'my-draft-card',
+  creator_reference: 'crt_8f2k1m9x4p7w3q5z',
+  status: 'draft',
+};
+
 module.exports = {
   publicPublishedCard,
   privateCardWithCorrectPin,
+  draftCard,
 };
