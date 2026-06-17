@@ -1,34 +1,64 @@
-const validator = require('@app-core/validator');
-// const { throwAppError } = require('@app-core/errors');
+const { throwAppError, ERROR_CODE } = require('@app-core/errors');
+const { CreatorCardsMessages } = require('@app/messages');
+const CreatorCards = require('@app/repository/creator-cards');
+const serializeCreatorCard = require('./serialize-card');
 
-const createSpec = `root {
-  title string<trim|minLength:3|maxLength:100>
-  description? string<trim|maxLength:500>
-  slug? string<trim|minLength:5|maxLength:50>
-  creator_reference string<trim|length:20>
-  links[]? {
-    title string<trim|minLength:1|maxLength:100>
-    url string<trim|maxLength:200>
+async function retrieve(serviceData) {
+  const query = { slug: serviceData.slug };
+
+  const retrievedData = await CreatorCards.findOne({ query });
+
+  /**
+   * 1. If no card with that slug exists → **HTTP 404**, error code `NF01`
+   */
+  if (!retrievedData) {
+    const code = ERROR_CODE.CARD_NOT_FOUND;
+    const message = CreatorCardsMessages[code];
+    throwAppError(message, code);
   }
-  service_rates? {
-    currency string(NGN|USD|GBP|GHS)
-    rates[] {
-      name string<trim|minLength:3|maxLength:100>
-      description string<trim|maxLength:250>
-      amount number<min:1>
-    }
+
+  /**
+   * 2. If the card exists but its `status` is `draft` → **HTTP 404**, error code `NF02`
+   * - (drafts are not publicly retrievable;
+   * - the distinct code lets API callers distinguish "does not exist" from "exists but is a draft")
+   */
+  if (retrievedData.status === 'draft') {
+    const code = ERROR_CODE.CARD_IS_A_DRAFT;
+    const message = CreatorCardsMessages[code];
+    throwAppError(message, code);
   }
-  status string(draft|published)
-  access_type? string(public|private)
-  access_code? string<trim|length:6>
-}`;
 
-const parsedCreateSpec = validator.parse(createSpec);
+  /**
+   * 3. If the card is `private` and no `access_code` query parameter was supplied → **HTTP 403**, error code `AC03`
+   */
+  if (retrievedData.access_type === 'private' && !serviceData.access_code) {
+    const code = ERROR_CODE.ACCESS_CODE_REQUIRED_TO_VIEW_PRIVATE_CARD;
+    const message = CreatorCardsMessages[code];
+    throwAppError(message, code);
+  }
 
-async function create(serviceData) {
-  const validatedData = validator.validate(serviceData, parsedCreateSpec);
+  /**
+   * 4. If the card is `private` and the supplied `access_code` does not match → **HTTP 403**, error code `AC04`
+   */
+  if (
+    retrievedData.access_type === 'private' &&
+    serviceData.access_code !== retrievedData.access_code
+  ) {
+    const code = ERROR_CODE.INVALID_ACCESS_CODE;
+    const message = CreatorCardsMessages[code];
+    throwAppError(message, code);
+  }
 
-  return validatedData;
+  /**
+   * 5. Otherwise → **HTTP 200** with the card data
+   */
+
+  const serializedData = serializeCreatorCard(retrievedData, { context: 'retrieve' });
+
+  return {
+    data: serializedData,
+    message: CreatorCardsMessages.CREATOR_CARD_RETRIEVED_SUCCESSFULLY,
+  };
 }
 
-module.exports = create;
+module.exports = retrieve;

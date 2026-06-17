@@ -1,5 +1,6 @@
 const { createHandler } = require('@app-core/server');
 const { appLogger } = require('@app-core/logger');
+const retrieveService = require('@app/services/creator-cards/retrieve');
 
 module.exports = createHandler({
   path: '/creator-cards/:slug',
@@ -10,16 +11,14 @@ module.exports = createHandler({
   },
   async handler(rc, helpers) {
     const { slug } = rc.params;
-    const { accessCode } = rc.query;
+    const { access_code: accessCode } = rc.query;
 
-    // Scaffold response
+    const response = await retrieveService({ slug, access_code: accessCode });
+
     return {
       status: helpers.http_statuses.HTTP_200_OK,
-      message: 'Creator Card Retrieved Successfully.',
-      data: {
-        slug,
-        accessCode,
-      },
+      data: response.data,
+      message: response.message,
     };
   },
 });
