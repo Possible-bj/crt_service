@@ -43,7 +43,19 @@ const deletedCard = {
   deleted: 1781742139841,
 };
 
+/** Test Case 19 — Deleting a private card with the wrong access_code */
+const privateCreatorCard = {
+  title: 'Private Creator Card',
+  description: 'Weekly cooking podcast',
+  slug: 'private-creator-card',
+  creator_reference: 'crt_a1b2c3d4e5f6g7h8',
+  status: 'published',
+  access_type: 'private',
+  access_code: 'A1B2C3',
+};
+
 module.exports = {
   deleteCardPayload,
   deletedCard,
+  privateCreatorCard,
 };
