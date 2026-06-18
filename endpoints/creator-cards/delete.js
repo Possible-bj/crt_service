@@ -12,8 +12,14 @@ module.exports = createHandler({
   async handler(rc, helpers) {
     const { slug } = rc.params;
     const payload = rc.body;
+    const { query } = rc;
 
-    const response = await deleteService({ slug, creator_reference: payload.creator_reference });
+    const response = await deleteService({
+      slug,
+      creator_reference: payload.creator_reference,
+      access_code: query.access_code,
+    });
+
     return {
       status: helpers.http_statuses.HTTP_200_OK,
       data: response.data,

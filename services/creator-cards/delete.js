@@ -39,6 +39,27 @@ async function deleteCard(serviceData) {
   }
 
   /**
+   * - @important Permission to extend business rule logic
+   * - if the card is private and the access_code was not provided, return **HTTP 403**, error code `AC03`
+   * - if the card is private and the access_code does not match, return **HTTP 403**, error code `AC04`
+   * - if the card is public, you can delete it
+   */
+  if (creatorCard.access_type === 'private' && !serviceData.access_code) {
+    const code = ERROR_CODE.ACCESS_CODE_REQUIRED_TO_DELETE_PRIVATE_CARD;
+    const message = CreatorCardsMessages[code];
+    throwAppError(message, code);
+  }
+
+  if (
+    creatorCard.access_type === 'private' &&
+    creatorCard.access_code !== serviceData.access_code
+  ) {
+    const code = ERROR_CODE.INVALID_ACCESS_CODE;
+    const message = CreatorCardsMessages[code];
+    throwAppError(message, code);
+  }
+
+  /**
    * - Once a card is deleted, it must no longer be retrievable via the public retrieval endpoint
    * - (`GET /creator-cards/:slug` returns **HTTP 404**, `NF01`)
    */

@@ -27,6 +27,7 @@ const ERROR_CODE = {
   CARD_NOT_FOUND: 'NF01', // Card not found
   CARD_IS_A_DRAFT: 'NF02', // Card is a draft
   ACCESS_CODE_REQUIRED_TO_VIEW_PRIVATE_CARD: 'AC03', // Access code is required to view private card
+  ACCESS_CODE_REQUIRED_TO_DELETE_PRIVATE_CARD: 'AC03', // Access code is required to delete private card
   INVALID_ACCESS_CODE: 'AC04', // Invalid access code
 
   // Error Code Extension

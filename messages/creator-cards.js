@@ -19,4 +19,5 @@ module.exports = {
   ACCESS_CODE_MUST_BE_6_CHARACTERS_LONG: 'Access code must be exactly 6 characters long',
   CREATOR_CARD_CREATED_SUCCESSFULLY: 'Creator Card Created Successfully.',
   CREATOR_CARD_DELETED_SUCCESSFULLY: 'Creator Card Deleted Successfully.',
+  ACCESS_CODE_REQUIRED_TO_DELETE_PRIVATE_CARD: 'Access code is required to delete private card',
 };
