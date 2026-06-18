@@ -71,18 +71,21 @@ async function deleteCard(serviceData) {
   }
 
   const deleted = Date.now();
+
+  const response = {
+    ...creatorCard,
+    deleted,
+  };
   /**
    * - On success → **HTTP 200**, returning the **deleted card in the same response format as the creation endpoint**
    */
   try {
     await CreatorCards.updateOne({ query, updateValues: { deleted } });
-
-    creatorCard.deleted = deleted;
   } catch (error) {
     handleDbError(error);
   }
 
-  const serializedCard = serializeCreatorCard(creatorCard, { context: 'delete' });
+  const serializedCard = serializeCreatorCard(response, { context: 'delete' });
 
   return {
     data: serializedCard,

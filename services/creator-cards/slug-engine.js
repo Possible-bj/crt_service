@@ -16,20 +16,20 @@ function isWhitespace(char) {
  * @returns {string | null}
  */
 function normalizeSlug(slug) {
-  if (slug == null || slug === '') {
-    return null;
-  }
-
-  const lowered = slug.toLowerCase();
   let normalized = '';
+  if (slug == null || slug === '') {
+    normalized = '';
+  } else {
+    const lowered = slug.toLowerCase();
 
-  for (let i = 0; i < lowered.length; i++) {
-    const char = lowered.charAt(i);
+    for (let i = 0; i < lowered.length; i++) {
+      const char = lowered.charAt(i);
 
-    if (isWhitespace(char)) {
-      normalized += '-';
-    } else if (SLUG_ALLOWED_CHARS.includes(char)) {
-      normalized += char;
+      if (isWhitespace(char)) {
+        normalized += '-';
+      } else if (SLUG_ALLOWED_CHARS.includes(char)) {
+        normalized += char;
+      }
     }
   }
 
@@ -52,23 +52,25 @@ function generateRandomSuffix() {
 
 /**
  *
- * @param {string} slug - The slug to check for duplicates
- * @param {string} mode "auto-generate" | "client-provided"
- * @returns {Promise<boolean>}
+ * @param {Object} payload - The payload to check for duplicates
+ * @param {string} payload.slug - The slug to check for duplicates
+ * @param {string} payload.mode "auto-generate" | "client-provided"
+ * @returns {Promise<Object>} - The duplicate slug found and the mode
  */
-async function checkSlugDuplicates(slug, mode = 'client-provided') {
+async function checkSlugDuplicates({ slug, mode = 'client-provided' } = {}) {
   try {
+    let duplicateSlugFound = true;
     const duplicateSlug = await CreatorCards.findOne({ query: { slug } }, { lean: true });
 
     if (!duplicateSlug) {
-      return false;
+      duplicateSlugFound = false;
     }
 
     /** return true if the slug is already taken and the mode is auto-generate
      * - don't throw an error to enable the slug engine to generate a new slug
      */
     if (mode === 'auto-generate' && duplicateSlug) {
-      return true;
+      duplicateSlugFound = true;
     }
 
     /** return true if the slug is already taken and the mode is client-provided
@@ -80,7 +82,7 @@ async function checkSlugDuplicates(slug, mode = 'client-provided') {
       throwAppError(message, code);
     }
 
-    return true;
+    return duplicateSlugFound;
   } catch (error) {
     handleDbError(error);
   }
@@ -93,7 +95,7 @@ async function checkSlugDuplicates(slug, mode = 'client-provided') {
  */
 async function resolveUniqueSlugWithSuffix(baseSlug) {
   const candidate = `${baseSlug}-${generateRandomSuffix()}`;
-  const isTaken = await checkSlugDuplicates(candidate, 'auto-generate');
+  const isTaken = await checkSlugDuplicates({ slug: candidate, mode: 'auto-generate' });
 
   if (isTaken) {
     return resolveUniqueSlugWithSuffix(baseSlug);
@@ -114,7 +116,7 @@ async function autoGenerateSlugFromTitle(title) {
     return resolveUniqueSlugWithSuffix(normalizedSlug);
   }
 
-  const isTaken = await checkSlugDuplicates(normalizedSlug, 'auto-generate');
+  const isTaken = await checkSlugDuplicates({ slug: normalizedSlug, mode: 'auto-generate' });
   if (isTaken) {
     return resolveUniqueSlugWithSuffix(normalizedSlug);
   }
@@ -141,7 +143,7 @@ async function autoGenerateSlugFromTitle(title) {
  * - If slug IS provided by the client and is already taken, return the SL02 error
  * - do NOT silently modify a client-provided slug.
  */
-async function executeSlugEngine(slug, title) {
+async function executeSlugEngine({ slug, title } = {}) {
   let normalizedSlug = normalizeSlug(slug);
 
   /** 
@@ -160,7 +162,7 @@ async function executeSlugEngine(slug, title) {
 
   // If slug IS provided by the client and is already taken, return the SL02 error
   if (normalizedSlug) {
-    await checkSlugDuplicates(normalizedSlug, 'client-provided');
+    await checkSlugDuplicates({ slug: normalizedSlug, mode: 'client-provided' });
   }
 
   // Switch to title if slug is null

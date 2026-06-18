@@ -33,14 +33,24 @@ const parsedCreateSpec = validator.parse(createSpec);
 async function create(serviceData) {
   const validatedData = validator.validate(serviceData, parsedCreateSpec);
 
-  validatedData.access_type = validatedData.access_type ?? 'public';
-  validateAccessCode(validatedData.access_type, validatedData.access_code);
+  const cardPayload = {
+    ...validatedData,
+    access_type: validatedData.access_type ?? 'public',
+  };
 
-  validatedData.slug = await executeSlugEngine(validatedData.slug, validatedData.title);
+  validateAccessCode({
+    accessType: cardPayload.access_type,
+    accessCode: cardPayload.access_code,
+  });
+
+  cardPayload.slug = await executeSlugEngine({
+    slug: cardPayload.slug,
+    title: cardPayload.title,
+  });
 
   let createdCard = null;
   try {
-    createdCard = await CreatorCards.create(validatedData);
+    createdCard = await CreatorCards.create(cardPayload);
   } catch (error) {
     handleDbError(error);
   }

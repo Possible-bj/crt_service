@@ -52,39 +52,41 @@ function copyServiceRates(serviceRates) {
  * @returns {Object}
  */
 function serializeCreatorCard(card, options = {}) {
+  let serialized = null;
+
   try {
-    if (!card) return null;
+    if (card) {
+      const { context = 'retrieve' } = options;
+      const includeAccessCode = ['create', 'delete'].includes(context);
 
-    const { context = 'retrieve' } = options;
-    const includeAccessCode = ['create', 'delete'].includes(context);
+      serialized = {
+        id: card.id ?? card._id,
+        title: card.title,
+        description: card.description,
+        slug: card.slug,
+        creator_reference: card.creator_reference,
+        links: copyLinks(card.links),
+        status: card.status,
+        access_type: card.access_type ?? 'public',
+        created: card.created,
+        updated: card.updated,
+        deleted: normalizeDeleted(card.deleted),
+      };
 
-    const serialized = {
-      id: card.id ?? card._id,
-      title: card.title,
-      description: card.description,
-      slug: card.slug,
-      creator_reference: card.creator_reference,
-      links: copyLinks(card.links),
-      status: card.status,
-      access_type: card.access_type ?? 'public',
-      created: card.created,
-      updated: card.updated,
-      deleted: normalizeDeleted(card.deleted),
-    };
+      const serviceRates = copyServiceRates(card.service_rates);
+      if (serviceRates != null) {
+        serialized.service_rates = serviceRates;
+      }
 
-    const serviceRates = copyServiceRates(card.service_rates);
-    if (serviceRates != null) {
-      serialized.service_rates = serviceRates;
+      if (includeAccessCode) {
+        serialized.access_code = card.access_code ?? null;
+      }
     }
-
-    if (includeAccessCode) {
-      serialized.access_code = card.access_code ?? null;
-    }
-
-    return serialized;
   } catch (error) {
     throwAppError(CreatorCardsMessages.FAILED_TO_SERIALIZE_CREATOR_CARD, ERROR_CODE.APPERR);
   }
+
+  return serialized;
 }
 
 module.exports = serializeCreatorCard;

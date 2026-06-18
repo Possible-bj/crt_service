@@ -40,15 +40,15 @@ const modelName = 'creator_cards';
 
 const schemaConfig = {
   _id: { type: SchemaTypes.ULID },
-  title: { type: SchemaTypes.String, minlength: 3, maxlength: 100 },
-  description: { type: SchemaTypes.String, length: 500 },
-  slug: { type: SchemaTypes.String, unique: true, index: true, length: 50 },
-  creator_reference: { type: SchemaTypes.String, index: true, length: 20 },
+  title: { type: SchemaTypes.String },
+  description: { type: SchemaTypes.String },
+  slug: { type: SchemaTypes.String, unique: true, index: true },
+  creator_reference: { type: SchemaTypes.String, index: true },
   links: [
     {
       _id: false,
-      title: { type: SchemaTypes.String, minlength: 1, maxlength: 100 },
-      url: { type: SchemaTypes.String, maxlength: 200 },
+      title: { type: SchemaTypes.String },
+      url: { type: SchemaTypes.String },
     },
   ],
   service_rates: {
@@ -56,9 +56,9 @@ const schemaConfig = {
     rates: [
       {
         _id: false,
-        name: { type: SchemaTypes.String, minlength: 3, maxlength: 100 },
-        description: { type: SchemaTypes.String, length: 250 },
-        amount: { type: SchemaTypes.Number, min: 1 },
+        name: { type: SchemaTypes.String },
+        description: { type: SchemaTypes.String },
+        amount: { type: SchemaTypes.Number },
       },
     ],
   },

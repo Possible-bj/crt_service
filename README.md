@@ -2,7 +2,8 @@
 
 This guide will help you understand the codebase architecture and set up your services, endpoints, and middleware correctly. This is NOT a solution to the assessment - it's a reference guide to help you implement your own solution following the codebase conventions.
 
-> 📖 **For comprehensive architecture documentation, see [documentation.md](./documentation.md)**
+> 📖 **For comprehensive architecture documentation, see [documentation.md](./documentation.md)**  
+> 📋 **For the Creator Card assessment implementation, see [docs/creator-cards.md](./docs/creator-cards.md)**
 
 ---
 

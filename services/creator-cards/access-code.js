@@ -15,10 +15,11 @@ function isAlphanumeric(value) {
 
 /**
  * Validates the access code for a creator card.
- * @param {string} accessType - The access type of the creator card.
- * @param {string} accessCode - The access code of the creator card.
+ * @param {Object} payload - The payload of the creator card.
+ * @param {string} payload.accessType - The access type of the creator card.
+ * @param {string} payload.accessCode - The access code of the creator card.
  */
-function validateAccessCode(accessType, accessCode) {
+function validateAccessCode({ accessType, accessCode } = {}) {
   if (accessType === 'private' && !accessCode) {
     const code = ERROR_CODE.ACCESS_CODE_REQUIRED;
     const message = CreatorCardsMessages[code];
