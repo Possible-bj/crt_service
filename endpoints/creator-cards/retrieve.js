@@ -7,7 +7,10 @@ module.exports = createHandler({
   method: 'get',
   middlewares: [],
   async onResponseEnd(rc, rs) {
-    appLogger.info({ requestContext: rc, response: rs }, 'creator-cards-request-completed');
+    appLogger.info(
+      { requestContext: rc, response: rs },
+      'creator-cards-retrieve-request-completed'
+    );
   },
   async handler(rc, helpers) {
     const { slug } = rc.params;

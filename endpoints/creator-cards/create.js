@@ -7,7 +7,7 @@ module.exports = createHandler({
   method: 'post',
   middlewares: [],
   async onResponseEnd(rc, rs) {
-    appLogger.info({ requestContext: rc, response: rs }, 'creator-cards-request-completed');
+    appLogger.info({ requestContext: rc, response: rs }, 'creator-cards-create-request-completed');
   },
   async handler(rc, helpers) {
     const payload = rc.body;

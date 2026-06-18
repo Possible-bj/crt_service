@@ -9,6 +9,7 @@ module.exports = {
 
   // Error Code Extension
   SL03: 'Slug Should only contain letters, numbers, hyphens, and underscores',
+  CR02: 'Invalid Creator reference',
 
   FAILED_TO_SERIALIZE_CREATOR_CARD: 'Failed to serialize creator card',
   SOME_ERROR_OCCURRED: 'Some error occurred',
@@ -17,4 +18,5 @@ module.exports = {
   FAILED_TO_VALIDATE_ACCESS_CODE: 'Failed to validate access code',
   ACCESS_CODE_MUST_BE_6_CHARACTERS_LONG: 'Access code must be exactly 6 characters long',
   CREATOR_CARD_CREATED_SUCCESSFULLY: 'Creator Card Created Successfully.',
+  CREATOR_CARD_DELETED_SUCCESSFULLY: 'Creator Card Deleted Successfully.',
 };

@@ -31,6 +31,7 @@ const ERROR_CODE = {
 
   // Error Code Extension
   INVALID_SLUG_CHARACTERS: 'SL03', // Invalid slug characters
+  INVALID_CREATOR_REFERENCE: 'CR02', // Invalid Creator reference
 };
 
 const ERROR_STATUS_CODE_MAPPING = {
@@ -59,6 +60,7 @@ const ERROR_STATUS_CODE_MAPPING = {
 
   // Error Code Extension
   SL03: 400, // Invalid slug characters
+  CR0: 403, // Invalid Creator reference
 };
 
 module.exports = { ERROR_CODE, ERROR_STATUS_CODE_MAPPING };
