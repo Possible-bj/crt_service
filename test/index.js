@@ -1,4 +1,5 @@
 const totalTests = 16;
+const totalPlusAdditionalTests = 19;
 
 const createTests = [
   'Test Case 1 - Full creation',
@@ -23,4 +24,11 @@ const deleteTests = [
   'Test Case 6 - Deleting a card',
   'Test Case 15 - Deleting a non-existent card',
   'Test Case 16 - Retrieving a deleted card',
+]; // 3 tests
+
+// additional tests
+const additionalTests = [
+  'Test Case 17 - Deleting a card with the wrong creator_reference',
+  'Test Case 18 - Deleting a private card with the right access_code',
+  'Test Case 19 - Deleting a private card with the wrong access_code',
 ]; // 3 tests

@@ -62,6 +62,7 @@ async function deleteCard(serviceData) {
   /**
    * - Once a card is deleted, it must no longer be retrievable via the public retrieval endpoint
    * - (`GET /creator-cards/:slug` returns **HTTP 404**, `NF01`)
+   * - Although, Since the model was created with paranoid: true, any soft deleted records will be excluded from the results
    */
   if (creatorCard.deleted) {
     const code = ERROR_CODE.CARD_NOT_FOUND;
@@ -69,11 +70,14 @@ async function deleteCard(serviceData) {
     throwAppError(message, code);
   }
 
+  const deleted = Date.now();
   /**
    * - On success → **HTTP 200**, returning the **deleted card in the same response format as the creation endpoint**
    */
   try {
-    await CreatorCards.deleteOne({ query, options: { paranoid: true } });
+    await CreatorCards.updateOne({ query, updateValues: { deleted } });
+
+    creatorCard.deleted = deleted;
   } catch (error) {
     handleDbError(error);
   }

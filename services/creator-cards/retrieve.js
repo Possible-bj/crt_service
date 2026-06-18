@@ -18,6 +18,18 @@ async function retrieve(serviceData) {
   }
 
   /**
+   * - If the card is deleted, it must not be retrievable
+   * - Although, Since the model was created with paranoid: true,
+   * - any soft deleted records will be excluded from the results by default
+   * - This is included here because the Stubbed model skips that paranoid logic
+   */
+  if (retrievedData.deleted) {
+    const code = ERROR_CODE.CARD_NOT_FOUND;
+    const message = CreatorCardsMessages[code];
+    throwAppError(message, code);
+  }
+
+  /**
    * 2. If the card exists but its `status` is `draft` → **HTTP 404**, error code `NF02`
    * - (drafts are not publicly retrievable;
    * - the distinct code lets API callers distinguish "does not exist" from "exists but is a draft")

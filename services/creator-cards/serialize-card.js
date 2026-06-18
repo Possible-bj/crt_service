@@ -53,6 +53,8 @@ function copyServiceRates(serviceRates) {
  */
 function serializeCreatorCard(card, options = {}) {
   try {
+    if (!card) return null;
+
     const { context = 'retrieve' } = options;
     const includeAccessCode = ['create', 'delete'].includes(context);
 
